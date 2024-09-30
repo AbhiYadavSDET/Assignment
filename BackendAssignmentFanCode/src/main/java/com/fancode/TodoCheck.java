@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import com.fancode.models.Todo;
 import com.fancode.models.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodoCheck {
@@ -12,7 +13,8 @@ public class TodoCheck {
     private static final String USERS_URL = "http://jsonplaceholder.typicode.com/users";
     private static final String TODOS_URL = "http://jsonplaceholder.typicode.com/todos";
 
-    public void checkTodosForFanCodeUsers() {
+    public List<String> checkTodosForFanCodeUsers() {
+        List<String> results = new ArrayList<>();
         List<User> users = getUsers();
 
         for (User user : users) {
@@ -21,12 +23,13 @@ public class TodoCheck {
                 double completionRate = calculateCompletionRate(todos);
 
                 if (completionRate <= 50) {
-                    System.out.println("User " + user.getName() + " does not have more than 50% tasks completed.");
+                    results.add("User " + user.getName() + " does not have more than 50% tasks completed.");
                 } else {
-                    System.out.println("User " + user.getName() + " has more than 50% tasks completed.");
+                    results.add("User " + user.getName() + " has more than 50% tasks completed.");
                 }
             }
         }
+        return results;
     }
 
     private List<User> getUsers() {
