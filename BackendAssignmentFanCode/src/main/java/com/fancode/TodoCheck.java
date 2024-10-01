@@ -1,12 +1,14 @@
 package com.fancode;
 
-import io.restassured.RestAssured;
+import com.fancode.Utils.APIUtils;
 import io.restassured.response.Response;
 import com.fancode.models.Todo;
 import com.fancode.models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TodoCheck {
 
@@ -15,11 +17,19 @@ public class TodoCheck {
 
     public List<String> checkTodosForFanCodeUsers() {
         List<String> results = new ArrayList<>();
-        List<User> users = getUsers();
+
+        Response usersResponse = APIUtils.getRequest(USERS_URL); // No query parameters needed
+        List<User> users = usersResponse.jsonPath().getList("", User.class);
 
         for (User user : users) {
             if (isFanCodeCity(user)) {
-                List<Todo> todos = getTodosForUser(user.getId());
+                // Prepare query parameters for todos
+                Map<String, Object> queryParams = new HashMap<>();
+                queryParams.put("userId", user.getId());
+
+                // Get the response for todos for each user
+                Response todosResponse = APIUtils.getRequest(TODOS_URL, queryParams);
+                List<Todo> todos = todosResponse.jsonPath().getList("", Todo.class);
                 double completionRate = calculateCompletionRate(todos);
 
                 if (completionRate <= 50) {
@@ -30,32 +40,6 @@ public class TodoCheck {
             }
         }
         return results;
-    }
-
-    private List<User> getUsers() {
-        Response response = RestAssured.given()
-                .log().all()
-                .when()
-                .get(USERS_URL)
-                .then()
-                .log().ifError()
-                .log().all()
-                .extract().response();
-
-        return response.jsonPath().getList("", User.class);
-    }
-
-    private List<Todo> getTodosForUser(int userId) {
-        Response response = RestAssured.given()
-                .log().all()
-                .when()
-                .get(TODOS_URL + "?userId=" + userId)
-                .then()
-                .log().ifError()
-                .log().all()
-                .extract().response();
-
-        return response.jsonPath().getList("", Todo.class);
     }
 
     private boolean isFanCodeCity(User user) {
