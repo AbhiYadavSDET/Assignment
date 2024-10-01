@@ -17,3 +17,10 @@ This project verifies that all users from the city "FanCode" have more than 50% 
    ```bash
    git clone <repository-url>
    cd BackendAssignmentFanCode
+
+## Technologies Used
+
+- **Java**: The main programming language used for the project.
+- **RestAssured**: For handling API requests and validations.
+- **TestNG**: For structuring the test cases and assertions.
+- **Maven**: For dependency management and build automation.
