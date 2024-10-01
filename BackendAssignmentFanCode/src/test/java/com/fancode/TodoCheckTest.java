@@ -3,6 +3,7 @@ package com.fancode;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class TodoCheckTest {
     public void testCheckTodosForFanCodeUsers() {
         TodoCheck todoCheck = new TodoCheck();
         List<String> results = todoCheck.checkTodosForFanCodeUsers();
+        SoftAssert softAssert = new SoftAssert();
 
         boolean hasLessThan50 = false;
         boolean hasMoreThan50 = false;
@@ -24,7 +26,10 @@ public class TodoCheckTest {
                 hasMoreThan50 = true;
             }
         }
-        Assert.assertTrue(hasLessThan50, "Expected at least one user to have less than 50% tasks completed");
-        Assert.assertTrue(hasMoreThan50, "Expected at least one user to have more than 50% tasks completed");
+        // Soft assert conditions
+        softAssert.assertTrue(hasLessThan50, "Expected at least one user to have less than 50% tasks completed");
+        softAssert.assertTrue(hasMoreThan50, "Expected at least one user to have more than 50% tasks completed");
+
+        softAssert.assertAll();
     }
 }
